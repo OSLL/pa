@@ -54,7 +54,7 @@ namespace pa
     Target const * tb::get_target() const
     { return target_; }
 
-    tb * create_tb(std::string const &triple, MemoryObject const &bytes, uint64_t base, uint64_t offset)
+    tb const * create_tb(std::string const &triple, MemoryObject const &bytes, uint64_t base, uint64_t offset)
     {
         std::string err;
         Target const *target = TargetRegistry::lookupTarget(triple, err);

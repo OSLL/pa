@@ -43,7 +43,7 @@ namespace pa
             container_type instructions_;
     };
 
-    tb * create_tb(llvm::Triple const &triple, llvm::MemoryObject const &bytes, uint64_t base, uint64_t offset = 0u);
+    tb const * create_tb(llvm::Triple const &triple, llvm::MemoryObject const &bytes, uint64_t base, uint64_t offset = 0u);
 
 } /* namespace pa */
 
