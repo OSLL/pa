@@ -4,12 +4,13 @@
 #include <llvm/MC/MCInst.h>
 #include <llvm/Support/TargetRegistry.h>
 #include <llvm/Support/MemoryObject.h>
+#include <llvm/ADT/OwningPtr.h>
 #include <llvm/ADT/StringExtras.h>
 #include <llvm/ADT/Triple.h>
 
+#include <string>
 #include <vector>
 #include <utility>
-#include <iterator>
 #include <cstdint>
 
 namespace pa
@@ -22,7 +23,7 @@ namespace pa
         public:
             typedef container_type::const_iterator const_iterator;
 
-            tb(llvm::Target const * const target, uintptr_t offset);
+            tb(llvm::Target const * const target);
 
             void push_back(llvm::MCInst const &inst);
 
@@ -30,20 +31,17 @@ namespace pa
             const_iterator end() const;
             bool empty() const;
             size_t size() const;
-            size_t bytes() const;
 
             void swap(tb &other);
 
-            uintptr_t get_offset() const;
             llvm::Target const * get_target() const;
 
         private:
             llvm::Target const * target_;
-            uintptr_t offset_;
             container_type instructions_;
     };
 
-    tb const * create_tb(llvm::Triple const &triple, llvm::MemoryObject const &bytes, uint64_t base, uint64_t offset = 0u);
+    llvm::OwningPtr<tb const> create_tb(std::string const &triple, llvm::MemoryObject const &bytes, uint64_t &size, uint64_t offset = 0u);
 
 } /* namespace pa */
 
@@ -51,7 +49,7 @@ namespace std
 {
 
     template <>
-    void swap<pa::tb>(pa::tb &l, pa::tb &r)
+    inline void swap<pa::tb>(pa::tb &l, pa::tb &r)
     { l.swap(r); }
 
 }
