@@ -3,7 +3,7 @@ CXXFLAGS=-Wall -Werror -pedantic -std=c++11 -MMD
 
 LLVM_CXXFLAGS=$(shell llvm-config-3.4 --cxxflags)
 LLVM_LDFLAGS=$(shell llvm-config-3.4 --ldflags)
-LIBS=$(shell llvm-config-3.4 --libs all-targets Core Object)
+LLVM_LIBS=$(shell llvm-config-3.4 --libs all-targets Core Object)
 
 PWD=$(shell pwd)
 
@@ -37,7 +37,7 @@ $(OBJ_DIR)/%.test.o: $(TEST_DIR)/%.cpp
 	$(CXX) -I$(INC_DIR) $(LLVM_CXXFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(BIN_DIR)/%.test: $(SRC_OBJS) $(OBJ_DIR)/%.test.o
-	$(CXX) $? $(LIBS) $(LLVM_LDFLAGS) -s -o $@
+	$(CXX) $? $(LLVM_LIBS) $(LLVM_LDFLAGS) -s -o $@
 
 make_obj:
 	$(MKDIR) $(OBJ_DIR)
