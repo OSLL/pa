@@ -76,10 +76,44 @@ void test_x64_call()
     CHECK(block_size == 16u);
 }
 
+void test_x64_jmp()
+{
+    unsigned char bytes[] = {
+                              0x48, 0x03, 0x4d, 0xe8,       // add
+                              0x89, 0xc8,                   // mov
+                              0x89, 0x45, 0xf0,             // mov
+                              0xe9, 0xc0, 0xff, 0xff, 0xff, // jmp
+                              0x8b, 0x45, 0xf4,             // mov
+                              0x5b,                         // pop
+                              0xc3,                         // ret
+                              0x5d                          // pop
+                            };
+    llvm::StringRef code((char const *)bytes, sizeof(bytes));
+    llvm::StringRefMemoryObject memory(code);
+    llvm::Triple triple("unknown-unknown-unknown");
+    triple.setArch(llvm::Triple::x86_64);
+
+    uint64_t block_size = 0;
+    llvm::OwningPtr<pa::tb const> block(pa::create_tb(triple.getTriple(), memory, block_size));
+
+    FATAL_CHECK(block);
+    CHECK(block->size() == 4u);
+    CHECK(block_size == 14u);
+
+    block = pa::create_tb(triple.getTriple(), memory, block_size, block_size);
+
+    FATAL_CHECK(block);
+    CHECK(block->size() == 3u);
+    CHECK(block_size == 5u);
+}
+
 int main()
 {
     prepare();
+    
     test_x86_call();
     test_x64_call();
+    test_x64_jmp();
+    
     return 0;
 }
