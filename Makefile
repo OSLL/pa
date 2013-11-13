@@ -1,9 +1,9 @@
 CXX=clang++
-CXXFLAGS=-Wall -Werror -pedantic -std=c++11 -MMD
+CXXFLAGS=-g -Wall -Werror -pedantic -std=c++11 -MMD
 
 LLVM_CXXFLAGS=$(shell llvm-config-3.4 --cxxflags)
 LLVM_LDFLAGS=$(shell llvm-config-3.4 --ldflags)
-LLVM_LIBS=$(shell llvm-config-3.4 --libs all-targets Core Object)
+LLVM_LIBS=$(shell llvm-config-3.4 --libs all-targets Core Object Jit Interpreter Native)
 
 PWD=$(shell pwd)
 
@@ -18,9 +18,17 @@ INC_DIR=$(PWD)/inc
 RM=rm -rf
 MKDIR=mkdir -p
 
-SRC_OBJS=$(OBJ_DIR)/tb.o
-TEST_OBJS=$(OBJ_DIR)/tb.test.o
-TESTS=$(BIN_DIR)/tb.test
+SRC_OBJS=                      \
+         $(OBJ_DIR)/tb.o       \
+         $(OBJ_DIR)/context.o
+
+TEST_OBJS=                     \
+         $(OBJ_DIR)/tb.test.o  \
+         $(OBJ_DIR)/context.test.o
+
+TESTS=                         \
+         $(BIN_DIR)/tb.test    \
+         $(BIN_DIR)/context.test
 
 default: build_tests
 
