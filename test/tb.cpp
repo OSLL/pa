@@ -1,7 +1,5 @@
-#include <llvm/Support/MemoryObject.h>
 #include <llvm/Support/TargetRegistry.h>
 #include <llvm/Support/TargetSelect.h>
-#include <llvm/Support/StringRefMemoryObject.h>
 
 #include <llvm/ADT/StringExtras.h>
 #include <llvm/ADT/Triple.h>
@@ -27,17 +25,14 @@ void test_x86_call()
                              0xe8, 0xdb, 0x00, 0x00, 0x00,       // call
                              0x81, 0xc3, 0xfb, 0x1a, 0x00, 0x00  // add
                            };
-    llvm::StringRef code((char const *)bytes, sizeof(bytes));
-    llvm::StringRefMemoryObject memory(code);
     llvm::Triple triple("unknown-unknown-unknown");
     triple.setArch(llvm::Triple::x86);
 
-    uint64_t block_size = 0;
-    llvm::OwningPtr<pa::tb const> block(pa::create_tb(triple.getTriple(), memory, block_size));
+    llvm::OwningPtr<pa::tb const> block(pa::create_tb(triple.getTriple(), (char const *)bytes, sizeof(bytes)));
 
     FATAL_CHECK(block);
     CHECK(block->size() == 3u);
-    CHECK(block_size == 9u);
+    CHECK(block->bytes() == 9u);
 }
 
 void test_x64_call()
@@ -57,23 +52,20 @@ void test_x64_call()
                              0x48, 0x89, 0xc7,                          // mov
                              0xe8, 0x6c, 0xfe, 0xff, 0xff               // call
                            };
-    llvm::StringRef code((char const *)bytes, sizeof(bytes));
-    llvm::StringRefMemoryObject memory(code);
     llvm::Triple triple("unknown-unknown-unknown");
     triple.setArch(llvm::Triple::x86_64);
 
-    uint64_t block_size = 0;
-    llvm::OwningPtr<pa::tb const> block(pa::create_tb(triple.getTriple(), memory, block_size));
+    llvm::OwningPtr<pa::tb const> block(pa::create_tb(triple.getTriple(), (char const *)bytes, sizeof(bytes)));
 
     FATAL_CHECK(block);
     CHECK(block->size() == 7u);
-    CHECK(block_size == 36u);
+    CHECK(block->bytes() == 36u);
 
-    block = pa::create_tb(triple.getTriple(), memory, block_size, block_size);
+    block = pa::create_tb(triple.getTriple(), (char const *)(bytes + block->bytes()), sizeof(bytes) - block->bytes());
 
     FATAL_CHECK(block);
     CHECK(block->size() == 3u);
-    CHECK(block_size == 16u);
+    CHECK(block->bytes() == 16u);
 }
 
 void test_x64_jmp()
@@ -88,23 +80,20 @@ void test_x64_jmp()
                               0xc3,                         // ret
                               0x5d                          // pop
                             };
-    llvm::StringRef code((char const *)bytes, sizeof(bytes));
-    llvm::StringRefMemoryObject memory(code);
     llvm::Triple triple("unknown-unknown-unknown");
     triple.setArch(llvm::Triple::x86_64);
 
-    uint64_t block_size = 0;
-    llvm::OwningPtr<pa::tb const> block(pa::create_tb(triple.getTriple(), memory, block_size));
+    llvm::OwningPtr<pa::tb const> block(pa::create_tb(triple.getTriple(), (char const *)bytes, sizeof(bytes)));
 
     FATAL_CHECK(block);
     CHECK(block->size() == 4u);
-    CHECK(block_size == 14u);
+    CHECK(block->bytes() == 14u);
 
-    block = pa::create_tb(triple.getTriple(), memory, block_size, block_size);
+    block = pa::create_tb(triple.getTriple(), (char const *)(bytes + block->bytes()), sizeof(bytes) - block->bytes());
 
     FATAL_CHECK(block);
     CHECK(block->size() == 3u);
-    CHECK(block_size == 5u);
+    CHECK(block->bytes() == 5u);
 }
 
 int main()

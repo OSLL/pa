@@ -33,10 +33,10 @@ namespace pa
         }
     };
 
-    hex_formatter hex_format(uint8_t const *bytes, uint64_t size)
+    inline hex_formatter hex_format(uint8_t const *bytes, uint64_t size)
     { return hex_formatter(bytes, size); }
 
-    hex_formatter hex_format(llvm::MemoryObject const &bytes, uint64_t addr, uint64_t size)
+    inline hex_formatter hex_format(llvm::MemoryObject const &bytes, uint64_t addr, uint64_t size)
     {
         std::vector<uint8_t> buffer(size, 0u);
         uint64_t len = std::min(size, bytes.getBase() + bytes.getExtent() - addr);

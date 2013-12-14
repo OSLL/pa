@@ -20,26 +20,24 @@ void prepare()
 void test_x86_module()
 {
     std::string err;
+    uint64_t rax = 0u;
     llvm::LLVMContext ctx;
-    llvm::OwningPtr<pa::execution_context> exec(pa::context_builder(ctx, "test").create());
 
-    FATAL_CHECK(exec);
-    FATAL_CHECK(exec->get_engine());
-    FATAL_CHECK(exec->get_cpu_state());
-
-    llvm::Module* module = new llvm::Module(__func__, ctx);
+    llvm::Module* module = nullptr;
+    llvm::OwningPtr<pa::execution_context> exec(pa::context_builder(ctx).get_main(&module).create());
     FATAL_CHECK(module);
+    FATAL_CHECK(exec);
 
-    exec->get_engine()->addModule(module);
-
+    llvm::Value *raxaddr = llvm::ConstantInt::get(llvm::IntegerType::get(ctx, 64), uint64_t(&rax));
     llvm::FunctionType *ftype = llvm::FunctionType::get(llvm::Type::getVoidTy(ctx), std::vector<llvm::Type *>(), false);
+    llvm::PointerType *regptr = llvm::PointerType::getUnqual(llvm::IntegerType::get(ctx, 64));
     llvm::Function *func = llvm::Function::Create(ftype, llvm::Function::ExternalLinkage, "inc_rax", module);
 
     llvm::IRBuilder<> builder(llvm::BasicBlock::Create(ctx, "body", func));
-    llvm::Value *ptrtorax = builder.CreateStructGEP(exec->get_cpu_state(), 0);
-    llvm::Value *rax = builder.CreateLoad(ptrtorax);
+    llvm::Value *ptrtorax = builder.CreateIntToPtr(raxaddr, regptr);
+    llvm::Value *reg = builder.CreateLoad(ptrtorax);
     llvm::Value *one = llvm::ConstantInt::get(llvm::IntegerType::get(ctx, 64), 1u);
-    llvm::Value *incremented = builder.CreateAdd(rax, one);
+    llvm::Value *incremented = builder.CreateAdd(reg, one);
     builder.CreateStore(incremented, ptrtorax);
     builder.CreateRetVoid();
 
@@ -47,9 +45,7 @@ void test_x86_module()
 
     exec->get_engine()->runFunction(func, std::vector<llvm::GenericValue>());
 
-    uint64_t *ptrtocontext = (uint64_t *)exec->get_engine()->getPointerToGlobal(exec->get_cpu_state());
-    FATAL_CHECK(ptrtocontext);
-    FATAL_CHECK(*ptrtocontext == 1ul);
+    FATAL_CHECK(rax == 1ul);
 }
 
 int main()

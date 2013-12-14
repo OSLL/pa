@@ -7,16 +7,22 @@
 #include <llvm/MC/MCSubtargetInfo.h>
 
 #include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/TargetRegistry.h>
+#include <llvm/Support/StringRefMemoryObject.h>
+
+#include <llvm/ADT/StringExtras.h>
+#include <llvm/ADT/Triple.h>
 
 namespace pa
 {
 
     using namespace llvm;
 
-    tb::tb(Target const * const target) : target_(target) {}
-
-    void tb::push_back(llvm::MCInst const &inst)
-    { instructions_.push_back(inst); }
+    void tb::push_back(llvm::MCInst const & inst, size_t inst_size)
+    {
+        instructions_.push_back(inst);
+        length_ += inst_size;
+    }
 
     tb::const_iterator tb::begin() const
     { return std::begin(instructions_); }
@@ -33,23 +39,22 @@ namespace pa
     void tb::swap(tb &other)
     {
         using std::swap;
-        swap(target_, other.target_);
+        swap(addr_, other.addr_);
+        swap(length_, other.length_);
         swap(instructions_, other.instructions_);
     }
 
-    Target const * tb::get_target() const
-    { return target_; }
+    uint64_t tb::address() const
+    { return addr_; }
 
-    OwningPtr<tb const> create_tb(std::string const &triple, MemoryObject const &bytes, uint64_t & size, uint64_t offset)
+    void tb::set_address(uint64_t addr)
+    { addr_ = addr; }
+
+    uint64_t tb::bytes() const
+    { return length_; }
+
+    OwningPtr<tb const> create_tb(std::string const &triple, Target const * target, MemoryObject const &bytes, uint64_t addr)
     {
-        std::string err;
-        Target const *target = TargetRegistry::lookupTarget(triple, err);
-        if (!target)
-        {
-            warn(err);
-            return OwningPtr<tb const>(nullptr);
-        }
-
         OwningPtr<const MCRegisterInfo> reginfo(target->createMCRegInfo(triple));
         if (!reginfo)
         {
@@ -78,31 +83,56 @@ namespace pa
             return OwningPtr<tb const>(nullptr);
         }
 
-        OwningPtr<tb> block(new tb(target));
+        OwningPtr<tb> block(new tb(addr));
         if (!block)
         {
             warn("cannot allocate translation block");
             return OwningPtr<tb const>(nullptr);
         }
 
-        uint64_t instr_size = 0u, block_size = 0u;
+        MCInst inst;
+        uint64_t instr_size = 0u;
         uint64_t const lower = bytes.getBase();
         uint64_t const upper = lower + bytes.getExtent();
-        for (uint64_t it = lower + offset; it < upper; it += instr_size)
+        for (uint64_t it = lower; it < upper; it += instr_size)
         {
-            MCInst inst;
             if (disassembler->getInstruction(inst, instr_size, bytes, it, nulls(), nulls()) != MCDisassembler::Success)
             {
                 warn("cannot parse instruction [", hex_format(bytes, it, 16u), "]");
                 return OwningPtr<tb const>(nullptr);
             }
-            block->push_back(inst);
-            block_size += instr_size;
+            block->push_back(inst, instr_size);
             if (instrinfo->get(inst.getOpcode()).mayAffectControlFlow(inst, *reginfo))
                 break;
         }
-        size = block_size;
+
         return OwningPtr<tb const>(block.take());
+    }
+
+    OwningPtr<tb const> create_tb(std::string const &triple, char const * bytes, size_t size, uint64_t addr)
+    {
+        std::string err;
+        Target const *target = TargetRegistry::lookupTarget(triple, err);
+        if (!target)
+        {
+            warn(err);
+            return OwningPtr<tb const>(nullptr);
+        }
+
+        return create_tb(triple, target, StringRefMemoryObject(StringRef(bytes, size)), addr);
+    }
+
+    OwningPtr<tb const> create_tb(std::string const &triple, MemoryObject const &bytes, uint64_t addr)
+    {
+        std::string err;
+        Target const *target = TargetRegistry::lookupTarget(triple, err);
+        if (!target)
+        {
+            warn(err);
+            return OwningPtr<tb const>(nullptr);
+        }
+
+        return create_tb(triple, target, bytes, addr);
     }
 
 } /*namespace pa*/
