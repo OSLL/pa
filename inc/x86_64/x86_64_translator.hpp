@@ -32,8 +32,21 @@ namespace x86_64
         REG_AL, REG_BL, REG_CL, REG_DL, REG_SIL, REG_DIL, REG_BPL, REG_SPL,
         REG_R8B, REG_R9B, REG_R10B, REG_R11B, REG_R12B, REG_R13B, REG_R14B, REG_R15B,
 
+        REG_SRC, REG_DST, REG_CMP,
+
         MAX_REG_IDX
     };
+
+    struct x86_64_registers
+    {
+        uint64_t rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp;
+        uint64_t r8,  r9,  r10, r11, r12, r13, r14, r15;
+
+        uint64_t src, dst, op; /* lazy eflags evaluation */
+    };
+
+    enum compare_operation
+    { OP_TEST, OP_CMP };
 
 } /* namespace x86_64 */
 } /* namespace pa */
@@ -54,12 +67,6 @@ namespace pa
 {
 namespace x86_64
 {
-
-    struct x86_64_registers
-    {
-        uint64_t rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp;
-        uint64_t r8,  r9,  r10, r11, r12, r13, r14, r15;
-    };
 
     typedef std::unordered_map< register_index, std::pair<llvm::Value *, bool> > loaded_registers;
 
@@ -84,6 +91,7 @@ namespace x86_64
 
         void gen_mov_rr(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &) const;
         void gen_add_rr(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &) const;
+        void gen_test_rr(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &) const;
 
         uint64_t get_register_ptr(register_index reg) const;
         llvm::Value * const load_register_value(register_index reg, llvm::IRBuilder<> & builder, loaded_registers & regset) const;

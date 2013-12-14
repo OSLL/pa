@@ -19,8 +19,8 @@ Stream & debug_output(Stream & out, Type const & obj, Types const & ... args)
 
 } /* namespace pa */
 
-#define warn(...) pa::debug_output(llvm::errs(), "In ", __func__, ": ", __VA_ARGS__, "\n")
-#define info(...) pa::debug_output(llvm::outs(), "In ", __func__, ": ", __VA_ARGS__, "\n")
-#define debug(...) pa::debug_output(llvm::outs(), "In ", __func__, ": ", __VA_ARGS__, "\n")
+#define warn(...) pa::debug_output(llvm::errs(), "In ", __FILE__, "[", __LINE__, "]: ", __VA_ARGS__, "\n")
+#define info(...) pa::debug_output(llvm::outs(), "In ", __FILE__, "[", __LINE__, "]: ", __VA_ARGS__, "\n")
+#define debug(...) pa::debug_output(llvm::outs(), "In ", __FILE__, "[", __LINE__, "]: ", __VA_ARGS__, "\n")
 
 #endif /*__INC_DEBUG_HPP__*/

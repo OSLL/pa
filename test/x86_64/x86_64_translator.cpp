@@ -41,7 +41,7 @@ void test_instr(llvm::StringRefMemoryObject const & memory)
 {
     llvm::LLVMContext ctx;
     llvm::Module* module = nullptr;
-    pa::x86_64::x86_64_registers regs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    pa::x86_64::x86_64_registers regs{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
 
     llvm::Triple triple("unknown-unknown-unknown");
     triple.setArch(llvm::Triple::x86_64);
@@ -87,7 +87,6 @@ void test_instrs(std::vector<std::pair<std::string, std::string> > const & instr
 {
     for (std::vector<std::pair<std::string, std::string> >::const_iterator it(begin(instrs)); it != end(instrs); ++it)
     {
-        llvm::outs() << it->first << " [" << pa::hex_format((uint8_t const *)it->second.data(), it->second.size()) << "]\n";
         llvm::StringRef code(it->second.data(), it->second.size());
         llvm::StringRefMemoryObject memory(code);
         test_instr(memory);
@@ -190,13 +189,63 @@ void test_add32rr_instrs()
     test_instrs(instrs);
 }
 
+void test_test64rr_instrs()
+{
+    std::vector<std::pair<std::string, std::string> > instrs{
+        {"testq %rax, %rbx",   "\x48\x85\xc3"},
+        {"testq %rbx, %rcx",   "\x48\x85\xd9"},
+        {"testq %rcx, %rdx",   "\x48\x85\xca"},
+        {"testq %rdx, %rsi",   "\x48\x85\xd6"},
+        {"testq %rsi, %rdi",   "\x48\x85\xf7"},
+        {"testq %rdi, %rbp",   "\x48\x85\xfd"},
+        {"testq %rbp, %rsp",   "\x48\x85\xec"},
+        {"testq %rsp, %r8",    "\x49\x85\xe0"},
+        {"testq %r8, %r9",     "\x4d\x85\xc1"},
+        {"testq %r9, %r10",    "\x4d\x85\xca"},
+        {"testq %r10, %r11",   "\x4d\x85\xd3"},
+        {"testq %r11, %r12",   "\x4d\x85\xdc"},
+        {"testq %r12, %r13",   "\x4d\x85\xe5"},
+        {"testq %r13, %r14",   "\x4d\x85\xee"},
+        {"testq %r14, %r15",   "\x4d\x85\xf7"},
+        {"testq %r15, %rax",   "\x4c\x85\xf8"}
+    };
+
+    test_instrs(instrs);
+}
+
+void test_test32rr_instrs()
+{
+    std::vector<std::pair<std::string, std::string> > instrs{
+        {"testl %eax, %ebx",   "\x85\xc3"},
+        {"testl %ebx, %ecx",   "\x85\xd9"},
+        {"testl %ecx, %edx",   "\x85\xca"},
+        {"testl %edx, %esi",   "\x85\xd6"},
+        {"testl %esi, %edi",   "\x85\xf7"},
+        {"testl %edi, %ebp",   "\x85\xfd"},
+        {"testl %ebp, %esp",   "\x85\xec"},
+        {"testl %esp, %r8d",   "\x41\x85\xe0"},
+        {"testl %r8d, %r9d",   "\x45\x85\xc1"},
+        {"testl %r9d, %r10d",  "\x45\x85\xca"},
+        {"testl %r10d, %r11d", "\x45\x85\xd3"},
+        {"testl %r11d, %r12d", "\x45\x85\xdc"},
+        {"testl %r12d, %r13d", "\x45\x85\xe5"},
+        {"testl %r13d, %r14d", "\x45\x85\xee"},
+        {"testl %r14d, %r15d", "\x45\x85\xf7"},
+        {"testl %r15d, %eax",  "\x44\x85\xf8"}
+    };
+
+    test_instrs(instrs);
+}
+
 int main()
 {
     prepare();
-    test_mov64rr_instrs();
-    test_mov32rr_instrs();
-    test_add64rr_instrs();
-    test_add32rr_instrs();
+    //test_mov64rr_instrs();
+    //test_mov32rr_instrs();
+    //test_add64rr_instrs();
+    //test_add32rr_instrs();
+    //test_test64rr_instrs();
+    test_test32rr_instrs();
 
     return 0;
 }

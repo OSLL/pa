@@ -17,80 +17,84 @@ namespace x86_64
 {
 
     static std::vector< std::vector<register_index> > physical_register{
-        {NO_REG,  NO_REG,   NO_REG,   NO_REG, NO_REG},
+        {NO_REG,    NO_REG,    NO_REG,    NO_REG,  NO_REG},
 
-        {REG_RAX, REG_EAX,  REG_AX,   REG_AH, REG_AL},
-        {REG_RBX, REG_EBX,  REG_BX,   REG_BH, REG_BL},
-        {REG_RCX, REG_ECX,  REG_CX,   REG_CH, REG_CL},
-        {REG_RDX, REG_EDX,  REG_DX,   REG_DH, REG_DL},
-        {REG_RSI, REG_ESI,  REG_SI,   NO_REG, REG_SIL},
-        {REG_RDI, REG_EDI,  REG_DI,   NO_REG, REG_DIL},
-        {REG_RBP, REG_EBP,  REG_BP,   NO_REG, REG_BPL},
-        {REG_RSP, REG_ESP,  REG_SP,   NO_REG, REG_SPL},
-        {REG_R8,  REG_R8D,  REG_R8W,  NO_REG, REG_R8B},
-        {REG_R9,  REG_R9D,  REG_R9W,  NO_REG, REG_R9B},
-        {REG_R10, REG_R10D, REG_R10W, NO_REG, REG_R10B},
-        {REG_R11, REG_R11D, REG_R11W, NO_REG, REG_R11B},
-        {REG_R12, REG_R12D, REG_R12W, NO_REG, REG_R12B},
-        {REG_R13, REG_R13D, REG_R13W, NO_REG, REG_R13B},
-        {REG_R14, REG_R14D, REG_R14W, NO_REG, REG_R14B},
-        {REG_R15, REG_R15D, REG_R15W, NO_REG, REG_R15B},
+        {REG_RAX,   REG_EAX,   REG_AX,    REG_AH,  REG_AL},
+        {REG_RBX,   REG_EBX,   REG_BX,    REG_BH,  REG_BL},
+        {REG_RCX,   REG_ECX,   REG_CX,    REG_CH,  REG_CL},
+        {REG_RDX,   REG_EDX,   REG_DX,    REG_DH,  REG_DL},
+        {REG_RSI,   REG_ESI,   REG_SI,    NO_REG,  REG_SIL},
+        {REG_RDI,   REG_EDI,   REG_DI,    NO_REG,  REG_DIL},
+        {REG_RBP,   REG_EBP,   REG_BP,    NO_REG,  REG_BPL},
+        {REG_RSP,   REG_ESP,   REG_SP,    NO_REG,  REG_SPL},
+        {REG_R8,    REG_R8D,   REG_R8W,   NO_REG,  REG_R8B},
+        {REG_R9,    REG_R9D,   REG_R9W,   NO_REG,  REG_R9B},
+        {REG_R10,   REG_R10D,  REG_R10W,  NO_REG,  REG_R10B},
+        {REG_R11,   REG_R11D,  REG_R11W,  NO_REG,  REG_R11B},
+        {REG_R12,   REG_R12D,  REG_R12W,  NO_REG,  REG_R12B},
+        {REG_R13,   REG_R13D,  REG_R13W,  NO_REG,  REG_R13B},
+        {REG_R14,   REG_R14D,  REG_R14W,  NO_REG,  REG_R14B},
+        {REG_R15,   REG_R15D,  REG_R15W,  NO_REG,  REG_R15B},
 
-        {REG_RAX, REG_EAX,  REG_AX,   REG_AH, REG_AL},
-        {REG_RBX, REG_EBX,  REG_BX,   REG_BH, REG_BL},
-        {REG_RCX, REG_ECX,  REG_CX,   REG_CH, REG_CL},
-        {REG_RDX, REG_EDX,  REG_DX,   REG_DH, REG_DL},
-        {REG_RSI, REG_ESI,  REG_SI,   NO_REG, REG_SIL},
-        {REG_RDI, REG_EDI,  REG_DI,   NO_REG, REG_DIL},
-        {REG_RBP, REG_EBP,  REG_BP,   NO_REG, REG_BPL},
-        {REG_RSP, REG_ESP,  REG_SP,   NO_REG, REG_SPL},
-        {REG_R8,  REG_R8D,  REG_R8W,  NO_REG, REG_R8B},
-        {REG_R9,  REG_R9D,  REG_R9W,  NO_REG, REG_R9B},
-        {REG_R10, REG_R10D, REG_R10W, NO_REG, REG_R10B},
-        {REG_R11, REG_R11D, REG_R11W, NO_REG, REG_R11B},
-        {REG_R12, REG_R12D, REG_R12W, NO_REG, REG_R12B},
-        {REG_R13, REG_R13D, REG_R13W, NO_REG, REG_R13B},
-        {REG_R14, REG_R14D, REG_R14W, NO_REG, REG_R14B},
-        {REG_R15, REG_R15D, REG_R15W, NO_REG, REG_R15B},
+        {REG_RAX,   REG_EAX,   REG_AX,    REG_AH,  REG_AL},
+        {REG_RBX,   REG_EBX,   REG_BX,    REG_BH,  REG_BL},
+        {REG_RCX,   REG_ECX,   REG_CX,    REG_CH,  REG_CL},
+        {REG_RDX,   REG_EDX,   REG_DX,    REG_DH,  REG_DL},
+        {REG_RSI,   REG_ESI,   REG_SI,    NO_REG,  REG_SIL},
+        {REG_RDI,   REG_EDI,   REG_DI,    NO_REG,  REG_DIL},
+        {REG_RBP,   REG_EBP,   REG_BP,    NO_REG,  REG_BPL},
+        {REG_RSP,   REG_ESP,   REG_SP,    NO_REG,  REG_SPL},
+        {REG_R8,    REG_R8D,   REG_R8W,   NO_REG,  REG_R8B},
+        {REG_R9,    REG_R9D,   REG_R9W,   NO_REG,  REG_R9B},
+        {REG_R10,   REG_R10D,  REG_R10W,  NO_REG,  REG_R10B},
+        {REG_R11,   REG_R11D,  REG_R11W,  NO_REG,  REG_R11B},
+        {REG_R12,   REG_R12D,  REG_R12W,  NO_REG,  REG_R12B},
+        {REG_R13,   REG_R13D,  REG_R13W,  NO_REG,  REG_R13B},
+        {REG_R14,   REG_R14D,  REG_R14W,  NO_REG,  REG_R14B},
+        {REG_R15,   REG_R15D,  REG_R15W,  NO_REG,  REG_R15B},
 
-        {REG_RAX, REG_EAX,  REG_AX,   REG_AH, REG_AL},
-        {REG_RBX, REG_EBX,  REG_BX,   REG_BH, REG_BL},
-        {REG_RCX, REG_ECX,  REG_CX,   REG_CH, REG_CL},
-        {REG_RDX, REG_EDX,  REG_DX,   REG_DH, REG_DL},
-        {REG_RSI, REG_ESI,  REG_SI,   NO_REG, REG_SIL},
-        {REG_RDI, REG_EDI,  REG_DI,   NO_REG, REG_DIL},
-        {REG_RBP, REG_EBP,  REG_BP,   NO_REG, REG_BPL},
-        {REG_RSP, REG_ESP,  REG_SP,   NO_REG, REG_SPL},
-        {REG_R8,  REG_R8D,  REG_R8W,  NO_REG, REG_R8B},
-        {REG_R9,  REG_R9D,  REG_R9W,  NO_REG, REG_R9B},
-        {REG_R10, REG_R10D, REG_R10W, NO_REG, REG_R10B},
-        {REG_R11, REG_R11D, REG_R11W, NO_REG, REG_R11B},
-        {REG_R12, REG_R12D, REG_R12W, NO_REG, REG_R12B},
-        {REG_R13, REG_R13D, REG_R13W, NO_REG, REG_R13B},
-        {REG_R14, REG_R14D, REG_R14W, NO_REG, REG_R14B},
-        {REG_R15, REG_R15D, REG_R15W, NO_REG, REG_R15B},
+        {REG_RAX,   REG_EAX,   REG_AX,    REG_AH,  REG_AL},
+        {REG_RBX,   REG_EBX,   REG_BX,    REG_BH,  REG_BL},
+        {REG_RCX,   REG_ECX,   REG_CX,    REG_CH,  REG_CL},
+        {REG_RDX,   REG_EDX,   REG_DX,    REG_DH,  REG_DL},
+        {REG_RSI,   REG_ESI,   REG_SI,    NO_REG,  REG_SIL},
+        {REG_RDI,   REG_EDI,   REG_DI,    NO_REG,  REG_DIL},
+        {REG_RBP,   REG_EBP,   REG_BP,    NO_REG,  REG_BPL},
+        {REG_RSP,   REG_ESP,   REG_SP,    NO_REG,  REG_SPL},
+        {REG_R8,    REG_R8D,   REG_R8W,   NO_REG,  REG_R8B},
+        {REG_R9,    REG_R9D,   REG_R9W,   NO_REG,  REG_R9B},
+        {REG_R10,   REG_R10D,  REG_R10W,  NO_REG,  REG_R10B},
+        {REG_R11,   REG_R11D,  REG_R11W,  NO_REG,  REG_R11B},
+        {REG_R12,   REG_R12D,  REG_R12W,  NO_REG,  REG_R12B},
+        {REG_R13,   REG_R13D,  REG_R13W,  NO_REG,  REG_R13B},
+        {REG_R14,   REG_R14D,  REG_R14W,  NO_REG,  REG_R14B},
+        {REG_R15,   REG_R15D,  REG_R15W,  NO_REG,  REG_R15B},
 
-        {REG_RAX, REG_EAX,  REG_AX,   REG_AH, REG_AL},
-        {REG_RBX, REG_EBX,  REG_BX,   REG_BH, REG_BL},
-        {REG_RCX, REG_ECX,  REG_CX,   REG_CH, REG_CL},
-        {REG_RDX, REG_EDX,  REG_DX,   REG_DH, REG_DL},
+        {REG_RAX,   REG_EAX,   REG_AX,    REG_AH,  REG_AL},
+        {REG_RBX,   REG_EBX,   REG_BX,    REG_BH,  REG_BL},
+        {REG_RCX,   REG_ECX,   REG_CX,    REG_CH,  REG_CL},
+        {REG_RDX,   REG_EDX,   REG_DX,    REG_DH,  REG_DL},
 
-        {REG_RAX, REG_EAX,  REG_AX,   REG_AH, REG_AL},
-        {REG_RBX, REG_EBX,  REG_BX,   REG_BH, REG_BL},
-        {REG_RCX, REG_ECX,  REG_CX,   REG_CH, REG_CL},
-        {REG_RDX, REG_EDX,  REG_DX,   REG_DH, REG_DL},
-        {REG_RSI, REG_ESI,  REG_SI,   NO_REG, REG_SIL},
-        {REG_RDI, REG_EDI,  REG_DI,   NO_REG, REG_DIL},
-        {REG_RBP, REG_EBP,  REG_BP,   NO_REG, REG_BPL},
-        {REG_RSP, REG_ESP,  REG_SP,   NO_REG, REG_SPL},
-        {REG_R8,  REG_R8D,  REG_R8W,  NO_REG, REG_R8B},
-        {REG_R9,  REG_R9D,  REG_R9W,  NO_REG, REG_R9B},
-        {REG_R10, REG_R10D, REG_R10W, NO_REG, REG_R10B},
-        {REG_R11, REG_R11D, REG_R11W, NO_REG, REG_R11B},
-        {REG_R12, REG_R12D, REG_R12W, NO_REG, REG_R12B},
-        {REG_R13, REG_R13D, REG_R13W, NO_REG, REG_R13B},
-        {REG_R14, REG_R14D, REG_R14W, NO_REG, REG_R14B},
-        {REG_R15, REG_R15D, REG_R15W, NO_REG, REG_R15B},
+        {REG_RAX,   REG_EAX,   REG_AX,    REG_AH,  REG_AL},
+        {REG_RBX,   REG_EBX,   REG_BX,    REG_BH,  REG_BL},
+        {REG_RCX,   REG_ECX,   REG_CX,    REG_CH,  REG_CL},
+        {REG_RDX,   REG_EDX,   REG_DX,    REG_DH,  REG_DL},
+        {REG_RSI,   REG_ESI,   REG_SI,    NO_REG,  REG_SIL},
+        {REG_RDI,   REG_EDI,   REG_DI,    NO_REG,  REG_DIL},
+        {REG_RBP,   REG_EBP,   REG_BP,    NO_REG,  REG_BPL},
+        {REG_RSP,   REG_ESP,   REG_SP,    NO_REG,  REG_SPL},
+        {REG_R8,    REG_R8D,   REG_R8W,   NO_REG,  REG_R8B},
+        {REG_R9,    REG_R9D,   REG_R9W,   NO_REG,  REG_R9B},
+        {REG_R10,   REG_R10D,  REG_R10W,  NO_REG,  REG_R10B},
+        {REG_R11,   REG_R11D,  REG_R11W,  NO_REG,  REG_R11B},
+        {REG_R12,   REG_R12D,  REG_R12W,  NO_REG,  REG_R12B},
+        {REG_R13,   REG_R13D,  REG_R13W,  NO_REG,  REG_R13B},
+        {REG_R14,   REG_R14D,  REG_R14W,  NO_REG,  REG_R14B},
+        {REG_R15,   REG_R15D,  REG_R15W,  NO_REG,  REG_R15B},
+
+        {REG_SRC,   NO_REG,    NO_REG,    NO_REG,  NO_REG},
+        {REG_DST,   NO_REG,    NO_REG,    NO_REG,  NO_REG},
+        {REG_CMP,   NO_REG,    NO_REG,    NO_REG,  NO_REG},
     };
 
     static std::unordered_map<std::string, register_index> register_index_map{
@@ -295,6 +299,15 @@ namespace x86_64
         case REG_R15:
             regptr = &(regs_->r15);
             break;
+        case REG_SRC:
+            regptr = &(regs_->src);
+            break;
+        case REG_DST:
+            regptr = &(regs_->dst);
+            break;
+        case REG_CMP:
+            regptr = &(regs_->op);
+            break;
         default:
             warn("unknown register ", reg);
             break;
@@ -369,6 +382,10 @@ namespace x86_64
             case 0x0058: /* add32rr */
                 gen_add_rr(*it, builder, regset);
                 break;
+            case 0x0A70: /* test64rr */
+            case 0x0A6B: /* test32rr */
+                gen_test_rr(*it, builder, regset);
+                break;
             default:
                 warn("unknown instruction ", get_instr_info()->getName(it->getOpcode()), "[", it->getOpcode(), "]");
                 break;
@@ -395,6 +412,17 @@ namespace x86_64
 
         Value * const sum = builder.CreateAdd(load_register_value(lhs, builder, regset), load_register_value(rhs, builder, regset));
         store_register_value(to, sum, builder, regset);
+    }
+
+    void x86_64_translator::gen_test_rr(MCInst const & inst, IRBuilder<> & builder, loaded_registers & regset) const
+    {
+        MCRegisterInfo const * const reg_info = get_register_info();
+        register_index const lhs = get_register_index(reg_info->getName(inst.getOperand(0).getReg()));
+        register_index const rhs = get_register_index(reg_info->getName(inst.getOperand(1).getReg()));
+
+        store_register_value(REG_SRC, load_register_value(lhs, builder, regset), builder, regset);
+        store_register_value(REG_DST, load_register_value(rhs, builder, regset), builder, regset);
+        store_register_value(REG_CMP, builder.getInt8(static_cast<uint64_t>(OP_TEST)), builder, regset);
     }
 
     void x86_64_translator::gen_store_registers(IRBuilder<> & builder, loaded_registers & regset) const
