@@ -90,12 +90,12 @@ namespace pa
             return OwningPtr<tb const>(nullptr);
         }
 
-        MCInst inst;
         uint64_t instr_size = 0u;
         uint64_t const lower = bytes.getBase();
         uint64_t const upper = lower + bytes.getExtent();
         for (uint64_t it = lower; it < upper; it += instr_size)
         {
+            MCInst inst;
             if (disassembler->getInstruction(inst, instr_size, bytes, it, nulls(), nulls()) != MCDisassembler::Success)
             {
                 warn("cannot parse instruction [", hex_format(bytes, it, 16u), "]");

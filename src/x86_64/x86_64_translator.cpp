@@ -378,6 +378,9 @@ namespace x86_64
             case 0x05CC: /* mov32rr */
                 gen_mov_rr(*it, builder, regset);
                 break;
+            case 0x05D9: /* mov64ri32 */
+                gen_mov_ri(*it, builder, regset);
+                break;
             case 0x0064: /* add64rr */
             case 0x0058: /* add32rr */
                 gen_add_rr(*it, builder, regset);
@@ -386,12 +389,28 @@ namespace x86_64
             case 0x0A6B: /* test32rr */
                 gen_test_rr(*it, builder, regset);
                 break;
+            case 0x0297: /* dec64r */
+                gen_dec_r(*it, builder, regset);
+                break;
+            case 0x041B: /* jmp 1 */
+                gen_store_registers(builder, regset);
+                gen_jmp_rel_imm(*it, builder, regset, tb);
+                return;
+            case 0x041D: /* jne 1 */
+                gen_store_registers(builder, regset);
+                gen_jne_rel_imm(*it, builder, regset, tb);
+                return;
+            case 0x040C: /* je 1 */
+                gen_store_registers(builder, regset);
+                gen_je_rel_imm(*it, builder, regset, tb);
+                return;
             default:
                 warn("unknown instruction ", get_instr_info()->getName(it->getOpcode()), "[", it->getOpcode(), "]");
                 break;
             }
         }
         gen_store_registers(builder, regset);
+        builder.CreateRet(builder.getInt64(tb->address() + tb->bytes()));
     }
 
     void x86_64_translator::gen_mov_rr(MCInst const & inst, IRBuilder<> & builder, loaded_registers & regset) const
@@ -401,6 +420,15 @@ namespace x86_64
         register_index const from = get_register_index(reg_info->getName(inst.getOperand(1).getReg()));
 
         store_register_value(to, load_register_value(from, builder, regset), builder, regset);
+    }
+
+    void x86_64_translator::gen_mov_ri(MCInst const & inst, IRBuilder<> & builder, loaded_registers & regset) const
+    {
+        MCRegisterInfo const * const reg_info = get_register_info();
+        register_index const to = get_register_index(reg_info->getName(inst.getOperand(0).getReg()));
+        Value * const imm = builder.getInt64(inst.getOperand(1).getImm());
+
+        store_register_value(to, imm, builder, regset);
     }
 
     void x86_64_translator::gen_add_rr(MCInst const & inst, IRBuilder<> & builder, loaded_registers & regset) const
@@ -414,6 +442,16 @@ namespace x86_64
         store_register_value(to, sum, builder, regset);
     }
 
+    void x86_64_translator::gen_dec_r(MCInst const & inst, IRBuilder<> & builder, loaded_registers & regset) const
+    {
+        MCRegisterInfo const * const reg_info = get_register_info();
+        register_index const reg = get_register_index(reg_info->getName(inst.getOperand(0).getReg()));
+
+        Value * const value = load_register_value(reg, builder, regset);
+        Value * const decremented = builder.CreateSub(value, builder.getInt64(1)); // TODO: fix register size!
+        store_register_value(reg, decremented, builder, regset);
+    }
+
     void x86_64_translator::gen_test_rr(MCInst const & inst, IRBuilder<> & builder, loaded_registers & regset) const
     {
         MCRegisterInfo const * const reg_info = get_register_info();
@@ -423,6 +461,45 @@ namespace x86_64
         store_register_value(REG_SRC, load_register_value(lhs, builder, regset), builder, regset);
         store_register_value(REG_DST, load_register_value(rhs, builder, regset), builder, regset);
         store_register_value(REG_CMP, builder.getInt8(static_cast<uint64_t>(OP_TEST)), builder, regset);
+    }
+
+    void x86_64_translator::gen_jmp_rel_imm(llvm::MCInst const & inst, llvm::IRBuilder<> & builder, loaded_registers & regset, tb const * const tb) const
+    { builder.CreateRet(builder.getInt64(inst.getOperand(0).getImm() + tb->address() + tb->bytes())); }
+
+    void x86_64_translator::gen_jne_rel_imm(llvm::MCInst const & inst, llvm::IRBuilder<> & builder, loaded_registers & regset, tb const * const tb) const
+    {
+        Value * const src_val = load_register_value(REG_SRC, builder, regset);
+        Value * const dst_val = load_register_value(REG_DST, builder, regset);
+        Value * const opr_val = load_register_value(REG_CMP, builder, regset);
+
+        Value * const temp_sub = builder.CreateSub(dst_val, src_val);
+        Value * const temp_and = builder.CreateAnd(dst_val, src_val);
+
+        Value * const opr = builder.CreateICmpEQ(opr_val, builder.getInt64(OP_CMP));
+        Value * const temp = builder.CreateSelect(opr, temp_sub, temp_and);
+
+        Value * const zf = builder.CreateICmpEQ(temp, builder.getInt64(0));
+        Value * const ip = builder.CreateSelect(zf, builder.getInt64(tb->address() + tb->bytes()), builder.getInt64(tb->address() + tb->bytes() + inst.getOperand(0).getImm())); 
+
+        builder.CreateRet(ip);
+    }
+
+    void x86_64_translator::gen_je_rel_imm(llvm::MCInst const & inst, llvm::IRBuilder<> & builder, loaded_registers & regset, tb const * const tb) const
+    {
+        Value * const src_val = load_register_value(REG_SRC, builder, regset);
+        Value * const dst_val = load_register_value(REG_DST, builder, regset);
+        Value * const opr_val = load_register_value(REG_CMP, builder, regset);
+
+        Value * const temp_sub = builder.CreateSub(dst_val, src_val);
+        Value * const temp_and = builder.CreateAnd(dst_val, src_val);
+
+        Value * const opr = builder.CreateICmpEQ(opr_val, builder.getInt64(OP_CMP));
+        Value * const temp = builder.CreateSelect(opr, temp_sub, temp_and);
+
+        Value * const nzf = builder.CreateICmpNE(temp, builder.getInt64(0));
+        Value * const ip = builder.CreateSelect(nzf, builder.getInt64(tb->address() + tb->bytes()), builder.getInt64(tb->address() + tb->bytes() + inst.getOperand(0).getImm())); 
+
+        builder.CreateRet(ip);
     }
 
     void x86_64_translator::gen_store_registers(IRBuilder<> & builder, loaded_registers & regset) const

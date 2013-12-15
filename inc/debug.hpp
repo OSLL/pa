@@ -3,24 +3,34 @@
 
 #include <llvm/Support/raw_ostream.h>
 
+#include <sstream>
+
 namespace pa
 {
 
 template <typename Stream>
-Stream & debug_output(Stream & out)
+Stream & output(Stream & out)
 { return out; }
 
 template <typename Stream, typename Type, typename ... Types>
-Stream & debug_output(Stream & out, Type const & obj, Types const & ... args)
+Stream & output(Stream & out, Type const & obj, Types const & ... args)
 {
     out << obj;
-    return debug_output(out, args ...);
+    return output(out, args ...);
 }
 
 } /* namespace pa */
 
-#define warn(...) pa::debug_output(llvm::errs(), "In ", __FILE__, "[", __LINE__, "]: ", __VA_ARGS__, "\n")
-#define info(...) pa::debug_output(llvm::outs(), "In ", __FILE__, "[", __LINE__, "]: ", __VA_ARGS__, "\n")
-#define debug(...) pa::debug_output(llvm::outs(), "In ", __FILE__, "[", __LINE__, "]: ", __VA_ARGS__, "\n")
+#define warn(...) pa::output(llvm::errs(), "In ", __FILE__, "[", __LINE__, "]: ", __VA_ARGS__, "\n")
+#define info(...) pa::output(llvm::outs(), "In ", __FILE__, "[", __LINE__, "]: ", __VA_ARGS__, "\n")
+#define debug(...) pa::output(llvm::outs(), "In ", __FILE__, "[", __LINE__, "]: ", __VA_ARGS__, "\n")
+
+template <typename ... Types>
+std::string const stringify(Types const & ... args)
+{
+    std::stringstream stream;
+    pa::output(stream, args ...);
+    return stream.str();
+}
 
 #endif /*__INC_DEBUG_HPP__*/

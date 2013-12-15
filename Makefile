@@ -29,10 +29,12 @@ X86_64_OBJS=                                        \
          $(X86_64_OBJ_DIR)/x86_64_translator.o
 
 X86_64_TEST_OBJS=                                   \
-         $(X86_64_OBJ_DIR)/x86_64_translator.test.o
+         $(X86_64_OBJ_DIR)/x86_64_translator.test.o \
+         $(X86_64_OBJ_DIR)/fib.test.o
 
 X86_64_TESTS=                                       \
-         $(X86_64_BIN_DIR)/x86_64_translator.test
+         $(X86_64_BIN_DIR)/x86_64_translator.test   \
+         $(X86_64_BIN_DIR)/fib.test
 
 SRC_OBJS=                                           \
          $(OBJ_DIR)/tb.o                            \

@@ -90,8 +90,14 @@ namespace x86_64
         x86_64_registers * regs_;
 
         void gen_mov_rr(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &) const;
+        void gen_mov_ri(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &) const;
         void gen_add_rr(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &) const;
+        void gen_dec_r(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &) const;
         void gen_test_rr(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &) const;
+
+        void gen_jmp_rel_imm(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &, tb const * const) const;
+        void gen_jne_rel_imm(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &, tb const * const) const;
+        void gen_je_rel_imm(llvm::MCInst const &, llvm::IRBuilder<> &, loaded_registers &, tb const * const) const;
 
         uint64_t get_register_ptr(register_index reg) const;
         llvm::Value * const load_register_value(register_index reg, llvm::IRBuilder<> & builder, loaded_registers & regset) const;

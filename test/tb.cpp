@@ -96,6 +96,27 @@ void test_x64_jmp()
     CHECK(block->bytes() == 5u);
 }
 
+void test_x64_fib()
+{
+    unsigned char bytes[] = {
+                              0x48, 0x89, 0xca,                           /* movq %rcx, %rdx */
+                              0x48, 0x01, 0xd9,                           /* addq %rbx, %rcx */
+                              0x48, 0x89, 0xd3,                           /* movq %rdx, %rbx */
+                              0x48, 0xff, 0xcf,                           /* decq %rdi */
+                              0xeb, 0xed,                                 /* jmp -0x13 */
+                              0x48, 0x89, 0xd8,                           /* movq %rdx, %rax */
+                              0x8b, 0x45, 0xf4
+                            };
+    llvm::Triple triple("unknown-unknown-unknown");
+    triple.setArch(llvm::Triple::x86_64);
+
+    llvm::OwningPtr<pa::tb const> block(pa::create_tb(triple.getTriple(), (char const *)bytes, sizeof(bytes)));
+
+    FATAL_CHECK(block);
+    CHECK(block->size() == 5u);
+    CHECK(block->bytes() == 14u);
+}
+
 int main()
 {
     prepare();
@@ -103,6 +124,7 @@ int main()
     test_x86_call();
     test_x64_call();
     test_x64_jmp();
-    
+    test_x64_fib();
+
     return 0;
 }
