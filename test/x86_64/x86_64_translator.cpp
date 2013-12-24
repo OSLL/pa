@@ -77,7 +77,7 @@ void test_instr(llvm::StringRefMemoryObject const & memory)
     pm.run(*func);
     pm.doFinalization();
 
-    //module->dump();
+    module->dump();
 
     exec->get_engine()->runFunction(func, std::vector<llvm::GenericValue>());
 }
@@ -260,14 +260,14 @@ void test_mov64ri32_instrs()
 int main()
 {
     prepare();
-    test_mov64rr_instrs();
+    //test_mov64rr_instrs();
     test_mov32rr_instrs();
-    test_add64rr_instrs();
-    test_add32rr_instrs();
-    test_test64rr_instrs();
-    test_test32rr_instrs();
-    test_jmp_1_instrs();
-    test_mov64ri32_instrs();
+    //test_add64rr_instrs();
+    //test_add32rr_instrs();
+    //test_test64rr_instrs();
+    //test_test32rr_instrs();
+    //test_jmp_1_instrs();
+    //test_mov64ri32_instrs();
 
     return 0;
 }
